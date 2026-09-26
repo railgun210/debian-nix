@@ -1,0 +1,9 @@
+# Which age keys `sops` encrypts new and edited secrets for. The private half
+# lives at /etc/sops/age/keys.txt (see docs/secrets.md).
+keys:
+  - &railgun age17zcgqs8yneywedahwrkneucttpz3megqtc6p8umjn5hcynz3eutsq7w8ru
+creation_rules:
+  - path_regex: (^|/)secrets/[^/]+$
+    key_groups:
+      - age:
+          - *railgun

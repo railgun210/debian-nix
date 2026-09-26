@@ -1,9 +1,12 @@
-# Ignore build outputs from performing a nix-build or `nix build` command
 result
+result/
+.vscode/
+*.bak
+.direnv/
+.devenv/
+*.swp
+*.swo
+.DS_Store
+.env
 result-*
-
-# Ignore automatically generated direnv output
-.direnv
-
-# Ignore NixOS interactive test driver history
-**/.nixos-test-history
+.claude/settings.local.json

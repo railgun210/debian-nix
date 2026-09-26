@@ -1,0 +1,19 @@
+name: Nix checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v19
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      # Evaluates the whole Home Manager config through checks.home in flake.nix.
+      - name: Evaluate flake
+        run: nix flake check --no-build --no-update-lock-file
+      - name: Check formatting
+        run: nix fmt -- --check .
