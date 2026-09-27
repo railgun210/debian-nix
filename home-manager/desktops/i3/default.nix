@@ -2,7 +2,7 @@
 # i3 (X11) as an alternate GDM session next to GNOME. Nothing here changes the
 # GNOME session: xsession.enable stays off (it would write ~/.xprofile, which
 # GDM sources for every Xorg session), so Home Manager only writes the i3,
-# i3status, picom and dunst config files plus user services that do nothing
+# i3status-rust, picom and dunst config files plus user services that do nothing
 # unless something reads their output.
 #
 # From apt (see docs/debian-setup.md): i3-wm (GDM session entry), i3lock +

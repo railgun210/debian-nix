@@ -58,7 +58,7 @@ in {
   home.packages = [weather];
 
   systemd.user.services.weather = {
-    Unit.Description = "Refresh the weather for i3status";
+    Unit.Description = "Refresh the weather for i3status-rust";
     Service = {
       Type = "oneshot";
       ExecStart = "${weather}/bin/weather";

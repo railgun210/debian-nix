@@ -1,7 +1,7 @@
 # home-manager/desktops/i3/i3.nix
 # Ported from the old Arch i3 config (~/GitRepos/dotfiles/i3). Colours and
 # fonts come from Stylix's i3 target; the bar sets its own font and palette
-# colours below. The status line it runs is defined in i3status.nix.
+# colours below. The status line it runs is defined in i3status-rust.nix.
 {
   config,
   lib,
@@ -40,7 +40,7 @@ let
 
   c = config.lib.stylix.colors;
 
-  # Bar font. Use a Nerd Font so the i3status module icons render.
+  # Bar font. Use a Nerd Font so the i3status-rust block icons render.
   barFont = {
     names = [ config.stylix.fonts.monospace.name ];
     style = "Regular";
