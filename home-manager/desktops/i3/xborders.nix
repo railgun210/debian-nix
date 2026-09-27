@@ -23,7 +23,7 @@ in {
 
   xsession.windowManager.i3.config.startup = [
     {
-      command = "pkill -x xborders; ${pkgs.xborders}/bin/xborders -c ${xbordersConfig}";
+      command = "pkill -x xborders; sleep 1; ${pkgs.xborders}/bin/xborders -c ${xbordersConfig}";
       always = true;
       notification = false;
     }

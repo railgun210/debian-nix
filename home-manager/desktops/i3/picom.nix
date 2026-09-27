@@ -24,7 +24,8 @@
       "class_g = 'dmenu'",
       "class_g = 'i3bar'",
       "class_g = 'slop'",
-      "_GTK_FRAME_EXTENTS@:c"
+      "_GTK_FRAME_EXTENTS@:c",
+      "role = 'xborder'"
     ];
 
     # ===== FADING =====
@@ -43,7 +44,8 @@
       "class_g = 'slop'",
       "class_g = 'Dunst'",
       "window_type = 'dock'",
-      "window_type = 'desktop'"
+      "window_type = 'desktop'",
+      "role = 'xborder'"
     ];
 
     # ===== ROUNDED CORNERS =====
@@ -68,7 +70,8 @@
       "100:class_g = 'Dunst'",
       "100:class_g = 'dmenu'",
       "100:window_type = 'dialog'",
-      "100:window_type = 'popup_menu'"
+      "100:window_type = 'popup_menu'",
+      "100:role = 'xborder'"
     ];
 
     # ===== GENERAL =====

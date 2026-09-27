@@ -84,9 +84,9 @@ in {
       };
 
       window = {
-        border = 3;
+        border = 0;
         titlebar = false;
-        hideEdgeBorders = "none";
+        hideEdgeBorders = "both";
         commands = [
           {
             criteria.instance = "floating_term";
@@ -211,6 +211,10 @@ in {
         }
         {
           command = "xss-lock --transfer-sleep-lock -- i3lock -n -i ${lockImage}";
+          notification = false;
+        }
+        {
+          command = "${pkgs.xautolock}/bin/xautolock -time 30 -locker 'systemctl suspend'";
           notification = false;
         }
         {
