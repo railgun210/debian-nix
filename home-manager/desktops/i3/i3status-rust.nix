@@ -5,7 +5,8 @@
   config,
   pkgs,
   ...
-}: let
+}:
+let
   c = config.lib.stylix.colors;
 
   weatherFile = "${config.xdg.cacheHome}/weather.txt";
@@ -18,6 +19,19 @@
       [ -n "$t" ] && echo "$((t * 1000))" > ${gpuTempFile}.tmp && mv ${gpuTempFile}.tmp ${gpuTempFile}
       sleep 2
     done
+  '';
+
+  btStatus = pkgs.writeShellScript "bt-status" ''
+    line=$(bluetoothctl devices Connected 2>/dev/null | head -1)
+    if [ -n "$line" ]; then
+      name=$(echo "$line" | cut -d' ' -f3-)
+      if [ ''${#name} -gt 12 ]; then
+        name=$(printf '%s' "$name" | cut -c1-11)…
+      fi
+      printf '\xf3\xb0\x82\xaf %s\n' "$name"
+    else
+      printf '\xf3\xb0\x82\xb2\n'
+    fi
   '';
 
   # Used by the sound custom block. PipeWire's PulseAudio compat layer causes
@@ -36,19 +50,20 @@
       printf '\xef\x80\xa8 %d%%\n' "$vol"
     fi
   '';
-in {
+in
+{
   systemd.user.services.gpu-temp = {
     Unit.Description = "Write NVIDIA GPU temperature for i3status-rust";
     Service = {
       ExecStart = "${gpuTempPoller}";
       Restart = "on-failure";
     };
-    Install.WantedBy = ["default.target"];
+    Install.WantedBy = [ "default.target" ];
   };
 
   # xkb-switch must be on PATH: the custom keyboard block shells out to it,
   # and the i3 Alt+Shift keybinding in i3.nix also calls it.
-  home.packages = [pkgs.xkb-switch];
+  home.packages = [ pkgs.xkb-switch ];
 
   programs.i3status-rust = {
     enable = true;
@@ -56,9 +71,9 @@ in {
       icons = "awesome6";
       theme = "plain";
       settings.theme = {
-        theme = "plain";
+        theme = "native";
         overrides = {
-          separator = " | ";
+          separator = "|";
           idle_bg = "#${c.base00}";
           idle_fg = "#${c.base05}";
           info_bg = "#${c.base00}";
@@ -70,7 +85,7 @@ in {
           critical_bg = "#${c.base00}";
           critical_fg = "#${c.base08}";
           separator_bg = "#${c.base00}";
-          separator_fg = "#${c.base03}";
+          separator_fg = "#${c.base02}";
         };
       };
       blocks = [
@@ -112,10 +127,22 @@ in {
           ];
         }
         {
+          block = "custom";
+          command = "${btStatus}";
+          format = "$text";
+          interval = 5;
+          click = [
+            {
+              button = "left";
+              cmd = "blueman-manager";
+            }
+          ];
+        }
+        {
           block = "temperature";
           format = "󰻠 $max.eng()C";
           chip = "k10temp-*";
-          inputs = ["Tctl"];
+          inputs = [ "Tctl" ];
           good = 0;
           idle = 60;
           info = 70;
