@@ -1,12 +1,12 @@
 # home-manager/theming/stylix.nix
 # Wallpaper, generated base16 palette, fonts, cursor and icon theme.
-{pkgs, ...}: {
+{ pkgs, ... }: {
   config = {
     stylix = {
       enable = true;
 
       # Wallpaper is declared directly here; color scheme is generated from it.
-      image = ../wallpapers/still_wallpapers/wallhaven-ogyeol.jpg;
+      image = ../wallpapers/still_wallpapers/wallhaven-3qrdr6.jpg;
       imageScalingMode = "fit";
 
       polarity = "dark";

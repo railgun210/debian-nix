@@ -7,7 +7,8 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   mod = "Mod4";
   # Ghostty's shared config keeps its GTK titlebar for GNOME; under i3 the
   # window manager provides borders, so drop the titlebar here.
@@ -21,18 +22,17 @@
 
   ws = toString;
   # Super+1..9 and Super+0 (= workspace 10), same as the GNOME setup
-  key = n:
-    if n == 10
-    then "0"
-    else toString n;
+  key = n: if n == 10 then "0" else toString n;
 
-  workspaceBindings = lib.listToAttrs (lib.concatMap (n: [
-    (lib.nameValuePair "${mod}+${key n}" "workspace ${ws n}")
-    (lib.nameValuePair "${mod}+Shift+${key n}" "move container to workspace ${ws n}")
-  ]) (lib.range 1 10));
+  workspaceBindings = lib.listToAttrs (
+    lib.concatMap (n: [
+      (lib.nameValuePair "${mod}+${key n}" "workspace ${ws n}")
+      (lib.nameValuePair "${mod}+Shift+${key n}" "move container to workspace ${ws n}")
+    ]) (lib.range 1 10)
+  );
 
   # i3lock only reads PNG, so convert the Stylix wallpaper at build time.
-  lockImage = pkgs.runCommand "i3lock-wallpaper.png" {nativeBuildInputs = [pkgs.imagemagick];} ''
+  lockImage = pkgs.runCommand "i3lock-wallpaper.png" { nativeBuildInputs = [ pkgs.imagemagick ]; } ''
     magick ${config.stylix.image} -resize 3840x2160^ -gravity center -extent 3840x2160 png:$out
   '';
 
@@ -42,7 +42,7 @@
 
   # Bar font. Use a Nerd Font so the i3status module icons render.
   barFont = {
-    names = [config.stylix.fonts.monospace.name];
+    names = [ config.stylix.fonts.monospace.name ];
     style = "Regular";
     size = 15.0;
   };
@@ -69,7 +69,8 @@
       done
     }
   '';
-in {
+in
+{
   xsession.windowManager.i3 = {
     enable = true;
     config = {
@@ -102,76 +103,78 @@ in {
       };
 
       assigns = {
-        ${ws 4} = [{class = "^vlc$";}];
-        ${ws 5} = [{class = "^Strawberry$";}];
-        ${ws 6} = [{class = "^steam$";}];
-        ${ws 7} = [{class = "^org.mozilla.Thunderbird$";} {class = "^thunderbird$";}];
+        ${ws 4} = [ { class = "^vlc$"; } ];
+        ${ws 5} = [ { class = "^Strawberry$"; } ];
+        ${ws 6} = [ { class = "^steam$"; } ];
+        ${ws 7} = [
+          { class = "^org.mozilla.Thunderbird$"; }
+          { class = "^thunderbird$"; }
+        ];
       };
 
-      keybindings =
-        workspaceBindings
-        // {
-          # Focus / move
-          "${mod}+${left}" = "focus left";
-          "${mod}+${down}" = "focus down";
-          "${mod}+${up}" = "focus up";
-          "${mod}+${right}" = "focus right";
-          "${mod}+Shift+${left}" = "move left";
-          "${mod}+Shift+${down}" = "move down";
-          "${mod}+Shift+${up}" = "move up";
-          "${mod}+Shift+${right}" = "move right";
+      keybindings = workspaceBindings // {
+        # Focus / move
+        "${mod}+${left}" = "focus left";
+        "${mod}+${down}" = "focus down";
+        "${mod}+${up}" = "focus up";
+        "${mod}+${right}" = "focus right";
+        "${mod}+Shift+${left}" = "move left";
+        "${mod}+Shift+${down}" = "move down";
+        "${mod}+Shift+${up}" = "move up";
+        "${mod}+Shift+${right}" = "move right";
 
-          "${mod}+f" = "fullscreen toggle";
-          "${mod}+a" = "focus parent";
-          "${mod}+space" = "floating toggle";
-          "${mod}+Shift+space" = "focus mode_toggle";
+        "${mod}+f" = "fullscreen toggle";
+        "${mod}+a" = "focus parent";
+        "${mod}+space" = "floating toggle";
+        "${mod}+Shift+space" = "focus mode_toggle";
 
-          # Workspace cycling
-          "${mod}+bracketright" = "workspace next";
-          "${mod}+bracketleft" = "workspace prev";
-          "${mod}+period" = "workspace next";
-          "${mod}+comma" = "workspace prev";
-          "${mod}+Tab" = "workspace next";
-          "${mod}+Shift+Tab" = "workspace prev";
-          "${mod}+Shift+bracketright" = "move container to workspace next; workspace next";
-          "${mod}+Shift+bracketleft" = "move container to workspace prev; workspace prev";
+        # Workspace cycling
+        "${mod}+bracketright" = "workspace next";
+        "${mod}+bracketleft" = "workspace prev";
+        "${mod}+period" = "workspace next";
+        "${mod}+comma" = "workspace prev";
+        "${mod}+Tab" = "workspace next";
+        "${mod}+Shift+Tab" = "workspace prev";
+        "${mod}+Shift+bracketright" = "move container to workspace next; workspace next";
+        "${mod}+Shift+bracketleft" = "move container to workspace prev; workspace prev";
 
-          # Launchers
-          "${mod}+d" = "exec --no-startup-id desktop-launcher";
-          "${mod}+t" = "exec ${term}";
-          "${mod}+Return" = "exec ${term}";
-          "${mod}+b" = "exec firefox-esr";
-          "${mod}+Shift+e" = "exec nautilus";
-          "Ctrl+Mod1+z" = "exec emacsclient -c -a ''";
-          "${mod}+Shift+a" = "exec anki"; # same key as GNOME; anki is in /usr/local/bin
-          "${mod}+Shift+period" = "exec flatpak run it.mijorus.smile"; # emoji picker, same key as GNOME
-          "${mod}+s" = "exec --no-startup-id ${pkgs.maim}/bin/maim -s -u | ${pkgs.xclip}/bin/xclip -selection clipboard -t image/png -i";
+        # Launchers
+        "${mod}+d" = "exec --no-startup-id desktop-launcher";
+        "${mod}+t" = "exec ${term}";
+        "${mod}+Return" = "exec ${term}";
+        "${mod}+b" = "exec firefox-esr";
+        "${mod}+Shift+e" = "exec nautilus";
+        "Ctrl+Mod1+z" = "exec emacsclient -c -a ''";
+        "${mod}+Shift+a" = "exec anki"; # same key as GNOME; anki is in /usr/local/bin
+        "${mod}+Shift+period" = "exec flatpak run it.mijorus.smile"; # emoji picker, same key as GNOME
+        "${mod}+s" =
+          "exec --no-startup-id ${pkgs.maim}/bin/maim -s -u | ${pkgs.xclip}/bin/xclip -selection clipboard -t image/png -i";
 
-          # i3 controls
-          "${mod}+q" = "kill";
-          "${mod}+Shift+c" = "reload";
-          "${mod}+Shift+r" = "restart";
-          "${mod}+r" = "mode resize";
+        # i3 controls
+        "${mod}+q" = "kill";
+        "${mod}+Shift+c" = "reload";
+        "${mod}+Shift+r" = "restart";
+        "${mod}+r" = "mode resize";
 
-          # Power menu and lock (xss-lock runs i3lock on lock-session)
-          "${mod}+Shift+x" = "exec --no-startup-id powermenu-dmenu";
-          "${mod}+x" = "exec --no-startup-id loginctl lock-session";
+        # Power menu and lock (xss-lock runs i3lock on lock-session)
+        "${mod}+Shift+x" = "exec --no-startup-id powermenu-dmenu";
+        "${mod}+x" = "exec --no-startup-id loginctl lock-session";
 
-          # Volume / brightness
-          "Ctrl+Mod1+1" = "exec --no-startup-id pamixer -d 10";
-          "Ctrl+Mod1+2" = "exec --no-startup-id pamixer -i 10";
-          "Ctrl+Mod1+3" = "exec --no-startup-id pamixer -t";
-          "${mod}+Shift+v" = "exec --no-startup-id pavucontrol";
-          "XF86AudioLowerVolume" = "exec --no-startup-id pamixer -d 5";
-          "XF86AudioRaiseVolume" = "exec --no-startup-id pamixer -i 5";
-          "XF86AudioMute" = "exec --no-startup-id pamixer -t";
-          "XF86MonBrightnessDown" = "exec --no-startup-id brightnessctl set 5%-";
-          "XF86MonBrightnessUp" = "exec --no-startup-id brightnessctl set +5%";
+        # Volume / brightness
+        "Ctrl+Mod1+1" = "exec --no-startup-id pamixer -d 10";
+        "Ctrl+Mod1+2" = "exec --no-startup-id pamixer -i 10";
+        "Ctrl+Mod1+3" = "exec --no-startup-id pamixer -t";
+        "${mod}+Shift+v" = "exec --no-startup-id pavucontrol";
+        "XF86AudioLowerVolume" = "exec --no-startup-id pamixer -d 5";
+        "XF86AudioRaiseVolume" = "exec --no-startup-id pamixer -i 5";
+        "XF86AudioMute" = "exec --no-startup-id pamixer -t";
+        "XF86MonBrightnessDown" = "exec --no-startup-id brightnessctl set 5%-";
+        "XF86MonBrightnessUp" = "exec --no-startup-id brightnessctl set +5%";
 
-          # Language switching (Alt+Left Shift or Alt+Right Shift)
-          "Mod1+Shift_L" = "exec --no-startup-id ${pkgs.xkb-switch}/bin/xkb-switch -n";
-          "Mod1+Shift_R" = "exec --no-startup-id ${pkgs.xkb-switch}/bin/xkb-switch -n";
-        };
+        # Language switching (Alt+Left Shift or Alt+Right Shift)
+        "Mod1+Shift_L" = "exec --no-startup-id ${pkgs.xkb-switch}/bin/xkb-switch -n";
+        "Mod1+Shift_R" = "exec --no-startup-id ${pkgs.xkb-switch}/bin/xkb-switch -n";
+      };
 
       modes.resize = {
         "${left}" = "resize shrink width 10 px or 10 ppt";
@@ -259,9 +262,9 @@ in {
           colors = {
             background = "#${c.base00}";
             statusline = "#${c.base05}"; # default text for all modules
-            separator = "#${c.base03}";
+            separator = "#${c.base00}";
             focusedWorkspace = {
-              border = "#${c.base0D}";
+              border = "#${c.base00}";
               background = "#${c.base02}";
               text = "#${c.base05}";
             };
@@ -271,7 +274,7 @@ in {
               text = "#${c.base05}";
             };
             urgentWorkspace = {
-              border = "#${c.base08}";
+              border = "#${c.base00}";
               background = "#${c.base0E}";
               text = "#${c.base05}";
             };
