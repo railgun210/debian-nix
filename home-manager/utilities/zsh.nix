@@ -1,18 +1,22 @@
 # home-manager/utilities/zsh.nix
-# Zsh shell configuration
-# Note: If you have a running zsh session you're gonna have to do source ~/.zshrc for the changes to load.
 {
   config,
   pkgs,
   ...
 }: {
+  # Paths for manually-installed binaries that live outside the Nix store.
+  home.sessionPath = [
+    "/usr/local/nvim-linux-x86_64/bin"
+  ];
+
+  home.packages = [ pkgs.zsh-completions ];
+
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
     enableCompletion = true;
 
-    # History settings
     history = {
       size = 10000;
       save = 10000;
@@ -21,7 +25,6 @@
       share = true;
     };
 
-    # Oh-My-Zsh
     oh-my-zsh = {
       enable = true;
       plugins = [
@@ -29,11 +32,10 @@
         "docker"
         "sudo"
         "fzf"
-        # direnv's hook comes from programs.direnv (development-tools.nix)
+        # direnv hook comes from programs.direnv (development-tools.nix)
       ];
     };
 
-    # Powerlevel10k theme
     plugins = [
       {
         name = "powerlevel10k";
@@ -42,38 +44,35 @@
       }
     ];
 
-    # Shell aliases
+    sessionVariables = {
+      FZF_DEFAULT_COMMAND = "fd --type f --hidden --follow --exclude .git";
+      FZF_DEFAULT_OPTS = "--height 40% --layout=reverse --border";
+    };
+
     shellAliases = {
-      # General
-      ll = "eza -la --icons=auto";
-      ls = "eza --icons=auto";
-      cat = "bat";
+      # Modern CLI replacements
+      ll   = "eza -la --icons=auto";
+      ls   = "eza --icons=auto";
+      cat  = "bat";
       grep = "rg";
       find = "fd";
 
-      # Git
-      gs = "git status";
-      ga = "git add";
-      gc = "git commit";
-      gp = "git push";
-      gl = "git pull";
-      gd = "git diff";
+      # Git shortcuts
+      gs  = "git status";
+      ga  = "git add";
+      gc  = "git commit";
+      gp  = "git push";
+      gl  = "git pull";
+      gd  = "git diff";
       gco = "git checkout";
 
-      # Backup — make the Dallas 5TB drive writable and claim ownership of the
-      # borg repo. udisks2 mounts removable drives under /media/$USER on Debian.
-      mount-dallas-zero = "sudo sh -c 'mount -o remount,rw /media/${config.home.username}/dallas_0 && chown -R ${config.home.username}: /media/${config.home.username}/dallas_0/railgun-desktop-backup'";
-
+      # Nix
       cleanup = "nix-collect-garbage -d";
+
     };
 
-    # Init content
     initContent = ''
-      # FZF configuration
-      export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-      export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-
-      # Powerlevel10k config (must come after theme is sourced above)
+      # Powerlevel10k config (must come after the theme is sourced above)
       [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
       # ── Home Manager commands: nsr, nrt, nfu, update, dotfiles ──
@@ -103,13 +102,8 @@
       function nsr { local d; d="$(dotfiles-dir)" || return; home-manager switch --flake "$d#railgun" "$@"; }
       function nrt { local d; d="$(dotfiles-dir)" || return; home-manager build --flake "$d#railgun" "$@"; }
       function nfu { local d; d="$(dotfiles-dir)" || return; nix flake update --flake "$d" "$@"; }
-      # Update inputs and re-apply home-manager
       function update { nfu && nsr; }
-      # cd into the repo
       function dotfiles { local d; d="$(dotfiles-dir)" && cd -- "$d"; }
     '';
   };
-
-  # Extra completion definitions (the plugins above are loaded by programs.zsh)
-  home.packages = [pkgs.zsh-completions];
 }

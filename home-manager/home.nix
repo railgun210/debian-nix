@@ -71,13 +71,6 @@
         insteadOf = https://github.com/
     '';
 
-    # Vanilla neovim (no plugins, for quick terminal edits)
-    programs.neovim = {
-      enable = true;
-      withRuby = false;
-      withPython3 = false;
-    };
-
     systemd.user.startServices = "sd-switch";
 
     home.stateVersion = "25.11";
