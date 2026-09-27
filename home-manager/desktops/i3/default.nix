@@ -11,7 +11,7 @@
 {pkgs, ...}: {
   imports = [
     ./i3.nix
-    ./i3status.nix
+    ./i3status-rust.nix
     ./dmenu.nix
     ./picom.nix
     ./dunst.nix

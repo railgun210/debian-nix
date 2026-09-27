@@ -47,28 +47,6 @@ let
     size = 15.0;
   };
 
-  langStatusWrapper = pkgs.writeShellScript "lang-i3status" ''
-    layout_file=$(mktemp /tmp/xkb-layout.XXXXXX)
-    ${pkgs.xkb-switch}/bin/xkb-switch > "$layout_file"
-
-    ( ${pkgs.xkb-switch}/bin/xkb-switch -W | while read -r layout; do
-      echo "$layout" > "$layout_file"
-      pkill -SIGUSR1 i3status
-    done ) &
-    watcher_pid=$!
-    trap 'rm -f "$layout_file"; kill $watcher_pid 2>/dev/null' EXIT
-
-    ${pkgs.i3status}/bin/i3status | {
-      read -r header && echo "$header"   # {"version":1}
-      read -r open   && echo "$open"     # [
-      while read -r line; do
-        LG=$(cat "$layout_file")
-        prefix=""; data="$line"
-        [[ "$line" == ,* ]] && { prefix=","; data=''${line:1}; }
-        echo "$prefix$(echo "$data" | ${pkgs.jq}/bin/jq --arg lbl "󰌌 $LG" '[{"full_text":$lbl}] + .')" || exit 1
-      done
-    }
-  '';
 in
 {
   xsession.windowManager.i3 = {
@@ -252,11 +230,11 @@ in
 
       # Stock i3bar with its own font and colours from the Stylix palette
       # (Stylix's exportedBarConfig is not merged in). The status line itself
-      # is configured in i3status.nix.
+      # is configured in i3status-rust.nix.
       bars = [
         {
           position = "top";
-          statusCommand = "${langStatusWrapper}";
+          statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.xdg.configHome}/i3status-rust/config-default.toml";
           trayOutput = "primary";
           fonts = barFont;
           colors = {
