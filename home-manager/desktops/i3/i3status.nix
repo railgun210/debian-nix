@@ -38,6 +38,7 @@ in {
 
     general = {
       colors = true;
+      output_format = "i3bar";
       interval = 1;
       color_good = "#${c.base0B}";
       color_degraded = "#${c.base0A}";

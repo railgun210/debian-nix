@@ -46,6 +46,29 @@
     style = "Regular";
     size = 15.0;
   };
+
+  langStatusWrapper = pkgs.writeShellScript "lang-i3status" ''
+    layout_file=$(mktemp /tmp/xkb-layout.XXXXXX)
+    ${pkgs.xkb-switch}/bin/xkb-switch > "$layout_file"
+
+    ( ${pkgs.xkb-switch}/bin/xkb-switch -W | while read -r layout; do
+      echo "$layout" > "$layout_file"
+      pkill -SIGUSR1 i3status
+    done ) &
+    watcher_pid=$!
+    trap 'rm -f "$layout_file"; kill $watcher_pid 2>/dev/null' EXIT
+
+    ${pkgs.i3status}/bin/i3status | {
+      read -r header && echo "$header"   # {"version":1}
+      read -r open   && echo "$open"     # [
+      while read -r line; do
+        LG=$(cat "$layout_file")
+        prefix=""; data="$line"
+        [[ "$line" == ,* ]] && { prefix=","; data=''${line:1}; }
+        echo "$prefix$(echo "$data" | ${pkgs.jq}/bin/jq --arg lbl "󰌌 $LG" '[{"full_text":$lbl}] + .')" || exit 1
+      done
+    }
+  '';
 in {
   xsession.windowManager.i3 = {
     enable = true;
@@ -144,6 +167,10 @@ in {
           "XF86AudioMute" = "exec --no-startup-id pamixer -t";
           "XF86MonBrightnessDown" = "exec --no-startup-id brightnessctl set 5%-";
           "XF86MonBrightnessUp" = "exec --no-startup-id brightnessctl set +5%";
+
+          # Language switching (Alt+Left Shift or Alt+Right Shift)
+          "Mod1+Shift_L" = "exec --no-startup-id ${pkgs.xkb-switch}/bin/xkb-switch -n";
+          "Mod1+Shift_R" = "exec --no-startup-id ${pkgs.xkb-switch}/bin/xkb-switch -n";
         };
 
       modes.resize = {
@@ -162,7 +189,8 @@ in {
           notification = false;
         }
         {
-          command = "setxkbmap -layout us,latam -option grp:alt_shift_toggle";
+          command = "setxkbmap -layout us,latam";
+          always = true;
           notification = false;
         }
         {
@@ -197,6 +225,10 @@ in {
           command = "strawberry";
           notification = false;
         }
+        {
+          command = "maestral start";
+          notification = false;
+        }
 
         # On every reload too, so a new stylix.image redraws the wallpaper.
         {
@@ -217,7 +249,7 @@ in {
       bars = [
         {
           position = "top";
-          statusCommand = "${pkgs.i3status}/bin/i3status";
+          statusCommand = "${langStatusWrapper}";
           trayOutput = "primary";
           fonts = barFont;
           colors = {

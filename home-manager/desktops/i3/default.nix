@@ -16,6 +16,7 @@
     ./picom.nix
     ./dunst.nix
     ./weather.nix
+    ./xborders.nix
   ];
 
   home.packages = with pkgs; [

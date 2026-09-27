@@ -64,7 +64,7 @@
       # borg repo. udisks2 mounts removable drives under /media/$USER on Debian.
       mount-dallas-zero = "sudo sh -c 'mount -o remount,rw /media/${config.home.username}/dallas_0 && chown -R ${config.home.username}: /media/${config.home.username}/dallas_0/railgun-desktop-backup'";
 
-      cleanup = "sudo nix-collect-garbage -d && nix-collect-garbage -d";
+      cleanup = "nix-collect-garbage -d";
     };
 
     # Init content
