@@ -149,9 +149,6 @@ in
         "XF86MonBrightnessDown" = "exec --no-startup-id brightnessctl set 5%-";
         "XF86MonBrightnessUp" = "exec --no-startup-id brightnessctl set +5%";
 
-        # Language switching (Alt+Left Shift or Alt+Right Shift)
-        "Mod1+Shift_L" = "exec --no-startup-id ${pkgs.xkb-switch}/bin/xkb-switch -n";
-        "Mod1+Shift_R" = "exec --no-startup-id ${pkgs.xkb-switch}/bin/xkb-switch -n";
       };
 
       modes.resize = {
@@ -170,7 +167,7 @@ in
           notification = false;
         }
         {
-          command = "setxkbmap -layout us,latam";
+          command = "setxkbmap -layout us,latam -option grp:alt_shift_toggle";
           always = true;
           notification = false;
         }

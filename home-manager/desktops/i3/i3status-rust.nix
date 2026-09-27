@@ -8,7 +8,9 @@
 }: let
   c = config.lib.stylix.colors;
 
+  weatherFile = "${config.xdg.cacheHome}/weather.txt";
   gpuTempFile = "${config.home.homeDirectory}/.cache/gpu_temp";
+
   gpuTempPoller = pkgs.writeShellScript "gpu-temp-poller" ''
     mkdir -p "$(dirname ${gpuTempFile})"
     while true; do
@@ -16,6 +18,23 @@
       [ -n "$t" ] && echo "$((t * 1000))" > ${gpuTempFile}.tmp && mv ${gpuTempFile}.tmp ${gpuTempFile}
       sleep 2
     done
+  '';
+
+  # Used by the sound custom block. PipeWire's PulseAudio compat layer causes
+  # intermittent connection races with i3status-rust's native pulseaudio driver,
+  # so we shell out to pamixer directly instead.
+  volumeStatus = pkgs.writeShellScript "volume-status" ''
+    muted=$(pamixer --get-mute)
+    vol=$(pamixer --get-volume)
+    if [ "$muted" = true ]; then
+      printf '\xef\x9a\xa9 muted\n'
+    elif [ "$vol" -lt 34 ]; then
+      printf '\xef\x80\xa6 %d%%\n' "$vol"
+    elif [ "$vol" -lt 67 ]; then
+      printf '\xef\x80\xa7 %d%%\n' "$vol"
+    else
+      printf '\xef\x80\xa8 %d%%\n' "$vol"
+    fi
   '';
 in {
   systemd.user.services.gpu-temp = {
@@ -27,18 +46,19 @@ in {
     Install.WantedBy = ["default.target"];
   };
 
-  # xkb-switch must be on PATH so the keyboard_layout block's xkbswitch
-  # driver can call it at runtime.
+  # xkb-switch must be on PATH: the custom keyboard block shells out to it,
+  # and the i3 Alt+Shift keybinding in i3.nix also calls it.
   home.packages = [pkgs.xkb-switch];
 
   programs.i3status-rust = {
     enable = true;
     bars.default = {
       icons = "awesome6";
-      theme = {
+      theme = "plain";
+      settings.theme = {
         theme = "plain";
         overrides = {
-          separator = "  ";
+          separator = " | ";
           idle_bg = "#${c.base00}";
           idle_fg = "#${c.base05}";
           info_bg = "#${c.base00}";
@@ -55,19 +75,45 @@ in {
       };
       blocks = [
         {
-          block = "keyboard_layout";
-          driver = "xkbswitch";
-          format = "󰌌 $layout";
+          block = "custom";
+          command = "[ -f ${weatherFile} ] && cat ${weatherFile} || echo '?'";
+          format = "$text";
+          interval = 60;
+          click = [
+            {
+              button = "left";
+              cmd = "xdg-open 'https://wttr.in'";
+            }
+          ];
+        }
+        {
+          block = "custom";
+          command = "xkb-switch";
+          format = "󰌌 $text";
+          interval = 1;
+          click = [
+            {
+              button = "left";
+              cmd = "xkb-switch -n";
+              update = true;
+            }
+          ];
         }
         {
           block = "net";
           format = "󰖩 $signal_strength";
           missing_format = "󰖪 down";
           interval = 5;
+          click = [
+            {
+              button = "left";
+              cmd = "nm-connection-editor";
+            }
+          ];
         }
         {
           block = "temperature";
-          format = " $max°C";
+          format = "󰻠 $max.eng()C";
           chip = "k10temp-*";
           inputs = ["Tctl"];
           good = 0;
@@ -91,15 +137,42 @@ in {
           alert = 10.0;
         }
         {
-          block = "sound";
-          driver = "pulseaudio";
-          format = " $volume";
-          format_muted = "󰖁 muted";
+          block = "custom";
+          command = "${volumeStatus}";
+          format = "$text";
+          interval = 1;
+          click = [
+            {
+              button = "left";
+              cmd = "pavucontrol";
+            }
+            {
+              button = "right";
+              cmd = "pamixer -t";
+              update = true;
+            }
+            {
+              button = "wheel_up";
+              cmd = "pamixer -i 5";
+              update = true;
+            }
+            {
+              button = "wheel_down";
+              cmd = "pamixer -d 5";
+              update = true;
+            }
+          ];
         }
         {
           block = "time";
           format = "$timestamp.datetime(f:'%a %d %b %H:%M')";
           interval = 1;
+          click = [
+            {
+              button = "left";
+              cmd = "thunderbird -calendar";
+            }
+          ];
         }
       ];
     };

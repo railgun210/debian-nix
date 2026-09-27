@@ -1,19 +1,14 @@
 # home-manager/desktops/i3/weather.nix
 # Current weather on the bar, e.g. "<cloud icon> 93°F", from wttr.in (no API
-# key). A user timer writes ~/.cache/weather.txt every 30 minutes and
-# i3status's read_file module shows it. The icons are Nerd Font glyphs (with
-# night variants), which the bar font already has.
+# key). A user timer writes ~/.cache/weather.txt every 30 minutes; the
+# i3status-rust custom block in i3status-rust.nix reads it. The icons are
+# Nerd Font glyphs (with night variants), which the bar font already has.
 {
   config,
   pkgs,
   ...
 }: let
   location = "San+Antonio";
-  # The bar font is a Nerd Font "Mono", which shrinks icons to one cell, so the
-  # weather icon alone is drawn in the non-Mono symbols font (pango markup,
-  # enabled in i3status below). iconSize scales it further if wanted.
-  iconFont = "Symbols Nerd Font";
-  iconSize = "100%";
   weatherFile = "${config.xdg.cacheHome}/weather.txt";
 
   weather = pkgs.writeShellApplication {
@@ -54,7 +49,7 @@
       now=$(date +%H:%M:%S)
       if [[ $now > $sunrise && $now < $sunset ]]; then icon=$day; else icon=$night; fi
 
-      echo "<span font_family='${iconFont}' size='${iconSize}'>$icon</span> ''${temp#+}" > ${weatherFile}.tmp
+      echo "$icon ''${temp#+}" > ${weatherFile}.tmp
       mv ${weatherFile}.tmp ${weatherFile}
     '';
   };
@@ -82,15 +77,4 @@ in {
     Install.WantedBy = ["timers.target"];
   };
 
-  programs.i3status = {
-    general.markup = "pango";
-    modules."read_file weather" = {
-      position = 0;
-      settings = {
-        path = weatherFile;
-        format = "%content";
-        format_bad = "";
-      };
-    };
-  };
 }
