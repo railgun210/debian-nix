@@ -47,7 +47,7 @@ in {
         '';
       };
 
-      # Render the monospace font (Terminess, a bitmap-style font) crisp:
+      # Render the monospace font (Cozette, a bitmap-style font) crisp:
       # no antialiasing, hinted to the pixel grid.
       status = {
         enable = true;

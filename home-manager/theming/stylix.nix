@@ -24,8 +24,8 @@
           name = "Overpass Nerd Font Mono";
         };
         monospace = {
-          package = pkgs.nerd-fonts.terminess-ttf;
-          name = "Terminess Nerd Font Mono";
+          package = pkgs.cozetteNF;
+          name = "CozetteVector Nerd Font Mono";
         };
         emoji = {
           package = pkgs.noto-fonts-color-emoji;

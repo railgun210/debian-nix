@@ -45,6 +45,16 @@
       overlays = [
         (final: prev: {
           cozette = cozette.packages.${system}.default;
+          # CozetteVector patched with all Nerd Font glyphs for the i3 status bar.
+          # Output family name: "CozetteVector Nerd Font Mono".
+          cozetteNF = prev.runCommand "cozette-nerd-font" {
+            nativeBuildInputs = [prev.nerd-font-patcher];
+          } ''
+            mkdir -p $out/share/fonts/truetype
+            nerd-font-patcher --complete --mono \
+              ${final.cozette}/share/fonts/truetype/CozetteVector.ttf \
+              -o $out/share/fonts/truetype/
+          '';
           buuf-icon-theme = buuf-icon-theme.packages.${system}.default;
         })
       ];
