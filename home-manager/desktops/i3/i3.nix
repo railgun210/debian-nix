@@ -67,6 +67,7 @@ let
     names = [
       config.stylix.fonts.monospace.name
       "Symbols Nerd Font Mono"
+      "Font Awesome 6 Free Solid"
     ];
     style = "Regular";
     size  = 15.0;

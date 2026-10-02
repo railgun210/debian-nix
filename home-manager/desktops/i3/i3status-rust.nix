@@ -244,7 +244,7 @@ in
           # Clock
           {
             block    = "time";
-            format   = "<span color='#${c.base02}'> </span>$timestamp.datetime(f:'%a %d %b %H:%M')";
+            format   = "<span color='#${c.base02}'>$icon </span>$timestamp.datetime(f:'%a %d %b %H:%M')";
             interval = 1;
             click    = [ { button = "left"; cmd = "thunderbird -calendar"; } ];
           }

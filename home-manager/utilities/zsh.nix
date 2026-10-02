@@ -3,7 +3,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   # Paths for manually-installed binaries that live outside the Nix store.
   home.sessionPath = [
     "/usr/local/nvim-linux-x86_64/bin"
@@ -51,20 +52,23 @@
 
     shellAliases = {
       # Modern CLI replacements
-      ll   = "eza -la --icons=auto";
-      ls   = "eza --icons=auto";
-      cat  = "bat";
+      ll = "eza -la --icons=auto";
+      ls = "eza --icons=auto";
+      cat = "bat";
       grep = "rg";
       find = "fd";
 
       # Git shortcuts
-      gs  = "git status";
-      ga  = "git add";
-      gc  = "git commit";
-      gp  = "git push";
-      gl  = "git pull";
-      gd  = "git diff";
+      gs = "git status";
+      ga = "git add";
+      gc = "git commit";
+      gp = "git push";
+      gl = "git pull";
+      gd = "git diff";
       gco = "git checkout";
+
+      # Common commands
+      neovim = "nvim";
 
       # Nix
       cleanup = "nix-collect-garbage -d";

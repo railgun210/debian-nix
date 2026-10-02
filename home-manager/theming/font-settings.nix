@@ -10,7 +10,7 @@ in {
   # Symbols fallback for terminals and editors ("Symbols Nerd Font Mono", which
   # Doom's nerd-icons also looks for) and the proportional "Symbols Nerd Font"
   # used by the i3 weather icon.
-  home.packages = [pkgs.nerd-fonts.symbols-only];
+  home.packages = [pkgs.nerd-fonts.symbols-only pkgs.font-awesome_6];
 
   # enabling fontconfig should regenerate cache when new font packages are added
   fonts.fontconfig = {
