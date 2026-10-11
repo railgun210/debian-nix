@@ -191,6 +191,7 @@ in
         # Scratchpad
         "${mod}+minus"       = "scratchpad show";
         "${mod}+Shift+minus" = "move scratchpad";
+        "${mod}+equal"       = "floating disable";
 
         # i3 controls
         "${mod}+q"       = "kill";

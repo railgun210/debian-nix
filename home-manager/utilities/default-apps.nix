@@ -3,8 +3,12 @@
 # files come from apt; jupyterlab.desktop from devshells/ml-devshell.nix.
 {...}: {
   xdg.mimeApps.enable = true;
+  xdg.mimeApps.associations.added = {
+    "text/html" = ["firefox-esr.desktop"];
+  };
   xdg.mimeApps.defaultApplications = {
     "inode/directory" = ["org.gnome.Nautilus.desktop"];
+    "text/html" = ["firefox-esr.desktop"];
 
     # Word / Writer (.doc .docx .docm .dotx .dotm)
     "application/msword" = ["libreoffice-writer.desktop"];
