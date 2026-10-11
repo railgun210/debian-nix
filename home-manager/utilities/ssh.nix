@@ -1,7 +1,7 @@
 # home-manager/utilities/ssh.nix
 # GitHub SSH key from sops. The public half is decrypted too, to
 # ~/.config/sops-nix/secrets/github-ssh-key-pub, for pasting into GitHub.
-{config, ...}: {
+{ config, ... }: {
   sops.secrets = {
     github-ssh-key = {
       sopsFile = ../../secrets/github-ssh-key.age;
@@ -11,12 +11,12 @@
       sopsFile = ../../secrets/github-ssh-key.pub;
       format = "binary";
     };
-    raspberry-pi-ssh-key = {
-      sopsFile = ../../secrets/raspberry-pi-ssh-key.age;
+    pi-ssh-key = {
+      sopsFile = ../../secrets/pi-ssh-key.age;
       format = "binary";
     };
-    raspberry-pi-ssh-key-pub = {
-      sopsFile = ../../secrets/raspberry-pi-ssh-key.pub;
+    pi-ssh-key-pub = {
+      sopsFile = ../../secrets/pi-ssh-key.pub;
       format = "binary";
     };
   };
@@ -25,10 +25,10 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks."raspberrypi" = {
-	hostname = "192.168.50.179";
-        identityFile = config.sops.secrets.raspberry-pi-ssh-key.path;
-        identitiesOnly = true;
+    matchBlocks."pi" = {
+      hostname = "192.168.50.179";
+      identityFile = config.sops.secrets.pi-ssh-key.path;
+      identitiesOnly = true;
     };
     matchBlocks."github.com" = {
       identityFile = config.sops.secrets.github-ssh-key.path;
