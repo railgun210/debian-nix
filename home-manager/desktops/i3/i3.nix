@@ -186,6 +186,11 @@ in
         "${mod}+Shift+a"      = "exec anki";
         "${mod}+Shift+period" = "exec flatpak run it.mijorus.smile";
         "${mod}+s"            = "exec --no-startup-id ${pkgs.maim}/bin/maim -s -u | ${pkgs.xclip}/bin/xclip -selection clipboard -t image/png -i";
+        "${mod}+Shift+s"      = "exec --no-startup-id ${pkgs.maim}/bin/maim -s | tee ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png | ${pkgs.xclip}/bin/xclip -selection clipboard -t image/png";
+
+        # Scratchpad
+        "${mod}+minus"       = "scratchpad show";
+        "${mod}+Shift+minus" = "move scratchpad";
 
         # i3 controls
         "${mod}+q"       = "kill";
