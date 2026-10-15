@@ -27,7 +27,7 @@ let
     "7"  = "7:󰇮 Mail";
     "8"  = "8:󱈹 Workspace";
     "9"  = "9:󰏆 Office";
-    "10" = "10:󰭹 Chat";
+    "10" = "10:󰸡 Todoist";
   };
   ws = n: wsNames.${toString n};
 
@@ -144,6 +144,7 @@ in
           { class = "^org.mozilla.Thunderbird$"; }
           { class = "^thunderbird$"; }
         ];
+        ${ws 10} = [ { class = "^todoist$"; } ];
       };
 
       # -------------------------------------------------------------------
@@ -244,6 +245,7 @@ in
         { command = "thunderbird";                                                                        notification = false;                  }
         { command = "strawberry";                                                                         notification = false;                  }
         { command = "maestral start";                                                                     notification = false;                  }
+        { command = "/snap/bin/todoist";                                                                   notification = false;                  }
         # Re-run on every reload so a new stylix.image redraws the wallpaper.
         { command = "feh --no-fehbg --bg-fill ${config.stylix.image}";          always = true;           notification = false;                  }
         { command = "pkill -x autotiling; autotiling";                          always = true;           notification = false;                  }

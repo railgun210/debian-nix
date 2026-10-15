@@ -40,6 +40,52 @@ let
     fi
   '';
 
+  # Detects an active VPN (NetworkManager vpn/wireguard) and shows the
+  # exit-node location via ipinfo.io (cached 5 min).  Falls back to wifi
+  # signal %, wired, or down when no VPN is active.
+  vpnStatus = pkgs.writeShellScript "vpn-status" ''
+    cache=/tmp/i3status_vpn_loc
+
+    vpn=$(nmcli -t -f TYPE,STATE con show --active 2>/dev/null \
+          | grep -E "^(vpn|wireguard):activated" | head -1)
+
+    if [ -n "$vpn" ]; then
+      if [ -f "$cache" ] && [ $(( $(date +%s) - $(stat -c %Y "$cache") )) -lt 300 ]; then
+        loc=$(cat "$cache")
+      else
+        info=$(curl -sf --max-time 5 'https://ipinfo.io/json' 2>/dev/null)
+        city=$(printf '%s' "$info" | grep -o '"city":"[^"]*"' | cut -d'"' -f4)
+        region=$(printf '%s' "$info" | grep -o '"region":"[^"]*"' | cut -d'"' -f4)
+        country=$(printf '%s' "$info" | grep -o '"country":"[^"]*"' | cut -d'"' -f4)
+        if [ -n "$city" ]; then
+          loc=$city
+        elif [ -n "$region" ] && [ -n "$country" ]; then
+          loc=$country-$region
+        elif [ -n "$country" ]; then
+          loc=$country
+        else
+          loc=?
+        fi
+        printf '%s' "$loc" > "$cache"
+      fi
+      printf '{"short_text":"󰒃","text":"VPN - %s"}\n' "$loc"
+    else
+      rm -f "$cache"
+      sig=$(nmcli -t -f ACTIVE,SIGNAL dev wifi 2>/dev/null \
+            | grep "^yes:" | cut -d: -f2 | head -1)
+      if [ -n "$sig" ]; then
+        printf '{"short_text":"󰖩","text":"%s%%"}\n' "$sig"
+      else
+        gw=$(ip route show default 2>/dev/null | head -1)
+        if [ -n "$gw" ]; then
+          printf '{"short_text":"󰈀","text":"wired"}\n'
+        else
+          printf '{"short_text":"󰖪","text":"down"}\n'
+        fi
+      fi
+    fi
+  '';
+
   # PipeWire's PulseAudio compat layer causes intermittent connection races
   # with i3status-rust's native pulseaudio driver, so we shell out to
   # pamixer directly instead.
@@ -47,7 +93,7 @@ let
     muted=$(pamixer --get-mute)
     vol=$(pamixer --get-volume)
     if [ "$muted" = true ]; then
-      printf '{"short_text":"\xef\x9a\xa9","text":"muted"}\n'
+      printf '{"short_text":"\xef\x80\xa6","text":"muted"}\n'
     elif [ "$vol" -lt 34 ]; then
       printf '{"short_text":"\xef\x80\xa6","text":"%d%%"}\n' "$vol"
     elif [ "$vol" -lt 67 ]; then
@@ -166,13 +212,14 @@ in
             click    = [ { button = "left"; cmd = "xkb-switch -n"; update = true; } ];
           }
 
-          # Network
+          # Network / VPN
           {
-            block          = "net";
-            format         = "<span color='#${c.base02}'>󰖩 </span>$signal_strength";
-            missing_format = "<span color='#${c.base02}'>󰖪 </span>down";
-            interval       = 5;
-            click          = [ { button = "left"; cmd = "nm-connection-editor"; } ];
+            block    = "custom";
+            command  = "${vpnStatus}";
+            json     = true;
+            format   = "<span color='#${c.base02}'>$short_text</span> $text";
+            interval = 5;
+            click    = [ { button = "left"; cmd = "nm-connection-editor"; } ];
           }
 
           # Bluetooth
