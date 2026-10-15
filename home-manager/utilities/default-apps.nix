@@ -9,6 +9,7 @@
   xdg.mimeApps.defaultApplications = {
     "inode/directory" = ["org.gnome.Nautilus.desktop"];
     "text/html" = ["firefox-esr.desktop"];
+    "text/plain" = ["org.xfce.mousepad.desktop"];
 
     # Word / Writer (.doc .docx .docm .dotx .dotm)
     "application/msword" = ["libreoffice-writer.desktop"];

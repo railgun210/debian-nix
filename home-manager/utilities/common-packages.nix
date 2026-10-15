@@ -18,7 +18,6 @@
     font-manager # Font inspection and management
     maestral # FOSS Dropbox CLI
     maestral-gui # FOSS Dropbox client
-    todoist-electron # Our favorite todo list app
     calibre # Ebook management
     cpu-x # CPU info
 

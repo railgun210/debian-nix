@@ -27,6 +27,7 @@
     pavucontrol # GUI mixer (Super+Shift+V)
     autotiling # split along the longer side
     brightnessctl # brightness keys
+    xfce.mousepad # lightweight GTK3 text editor
   ];
 
   # Debian's /etc/gdm3/Xsession sources this for Xorg sessions only (GNOME on

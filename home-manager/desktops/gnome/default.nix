@@ -40,7 +40,7 @@ in {
     PATH=${config.home.homeDirectory}/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH
   '';
 
-  # Run Nix-built Electron apps (VS Code, Todoist) natively on Wayland
+  # Run Nix-built Electron apps (VS Code) natively on Wayland
   # instead of through Xwayland. Written to the same environment.d file that
   # Home Manager generates for XDG_DATA_DIRS.
   systemd.user.sessionVariables.NIXOS_OZONE_WL = "1";

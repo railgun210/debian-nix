@@ -39,6 +39,7 @@ in {
 
           # Rust
           rust-lang.rust-analyzer
+          vadimcn.vscode-lldb # CodeLLDB debugger adapter
 
           # C/C++
           ms-vscode.cpptools
@@ -89,6 +90,13 @@ in {
         "editor.minimap.enabled" = false;
         "editor.renderWhitespace" = "boundary";
         "editor.tabSize" = 2;
+
+        # Rust debugging (CodeLLDB)
+        "rust-analyzer.debug.engine" = "vadimcn.vscode-lldb";
+        "rust-analyzer.debug.openDebugPane" = true;
+        # Keep debug symbols for web server hot-attach scenarios
+        "lldb.showDisassembly" = "never";
+        "lldb.dereferencePointers" = true;
 
         # Nix
         "nix.enableLanguageServer" = true;
