@@ -190,19 +190,29 @@ sudo systemctl enable gdm3
 
 # Browser and office suite (BROWSER and the Office MIME defaults point here)
 info "Apps"
-apt_install firefox-esr libreoffice-writer libreoffice-calc libreoffice-impress libreoffice-gnome
+apt_install firefox-esr libreoffice-writer libreoffice-calc libreoffice-impress libreoffice-gnome \
+    strawberry
 
 # Everyday CLI tools kept outside Nix
 info "System tools"
-apt_install vim btop apt-file netselect-apt
+apt_install vim btop apt-file netselect-apt wget sqv
 sudo apt-file update >/dev/null
 
 # GTK2 engine + themes from the old MATE setup (older GTK2 apps still use them)
 info "GTK2 themes"
 apt_install gtk2-engines-murrine murrine-themes shiki-colors
 
-if ask "Install the i3 session (i3-wm, i3lock, xss-lock, picom, polkit agent, blueman)?"; then
-    apt_install i3-wm i3lock xss-lock picom mate-polkit blueman
+if ask "Install the i3 session (i3-wm, i3lock, xss-lock, picom, polkit agent)?"; then
+    # Bluetooth is handled by bluetuith (Nix); blueman is no longer needed.
+    apt_install i3-wm i3lock xss-lock picom mate-polkit
+fi
+
+if ask "Install Synaptic GUI package manager?"; then
+    apt_install synaptic
+fi
+
+if ask "Install Snap package support (snapd)?"; then
+    apt_install snapd
 fi
 
 if ask "Install Steam (steam-installer from contrib)?"; then

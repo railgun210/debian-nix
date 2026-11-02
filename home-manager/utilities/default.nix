@@ -2,6 +2,7 @@
 # Utilities shared across desktop configurations.
 {...}: {
   imports = [
+    ./chrome.nix
     ./common-packages.nix
     ./default-apps.nix
     ./devshells

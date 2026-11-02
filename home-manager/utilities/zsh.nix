@@ -8,6 +8,7 @@
   # Paths for manually-installed binaries that live outside the Nix store.
   home.sessionPath = [
     "/usr/local/nvim-linux-x86_64/bin"
+    "$HOME/.local/bin"
   ];
 
   home.packages = [ pkgs.zsh-completions ];

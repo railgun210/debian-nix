@@ -65,10 +65,11 @@ Choose **gdm3** if apt asks which display manager to use (or run
 
 ```bash
 # BROWSER and the Office MIME defaults (utilities/default-apps.nix) point here
-sudo apt install firefox-esr libreoffice-writer libreoffice-calc libreoffice-impress libreoffice-gnome
+sudo apt install firefox-esr libreoffice-writer libreoffice-calc libreoffice-impress libreoffice-gnome \
+  strawberry
 
 # CLI tools kept outside Nix
-sudo apt install vim btop apt-file netselect-apt
+sudo apt install vim btop apt-file netselect-apt wget sqv
 sudo apt-file update
 
 # GTK2 engine + themes from the old MATE setup
@@ -80,13 +81,21 @@ sudo apt install gtk2-engines-murrine murrine-themes shiki-colors
 `home-manager/desktops/i3/` configures an i3 (X11) session next to GNOME.
 Only the pieces that need root come from apt: the GDM session entry, the
 PAM-backed screen locker, the compositor (which uses Debian's NVIDIA GL
-directly), the polkit agent and the Bluetooth tray applet.
+directly), and the polkit agent.
 
 ```bash
-sudo apt install i3-wm i3lock xss-lock picom mate-polkit blueman
+sudo apt install i3-wm i3lock xss-lock picom mate-polkit
 ```
 
-Everything else (dmenu, i3status, dunst, feh, autotiling, ...) comes from Nix.
+Everything else (dmenu, i3status-rust, dunst, feh, autotiling, bluetuith, ...) comes from Nix.
+Bluetooth is managed by `bluetuith` (a Nix TUI) — `blueman` is no longer needed.
+
+### Synaptic and Snap (optional)
+
+```bash
+sudo apt install synaptic   # GUI package manager
+sudo apt install snapd      # Snap package support
+```
 
 ### Steam (optional)
 
@@ -275,6 +284,39 @@ sudo itself). `bootstrap.sh` pins the version in `PIA_VERSION`:
 curl -LO https://installers.privateinternetaccess.com/download/pia-linux-3.7.2-08420.run
 sh pia-linux-3.7.2-08420.run
 ```
+
+---
+
+## 16. Google Chrome
+
+`utilities/chrome.nix` installs Google Chrome from Nix and writes a managed
+policy under `~/.config/google-chrome/policies/managed/extensions.json` that
+force-installs four extensions on every launch:
+
+- **Bitwarden** — password manager
+- **Raindrop.io** — cross-browser bookmark manager (also add to Firefox ESR via addons.mozilla.org)
+- **Sluka** — language-learning reader
+- **uBlock Origin** — ad-blocker
+
+No apt or Flatpak steps needed — Chrome and its policy land with `home-manager switch`.
+
+## 17. Random wallpaper
+
+`theming/random-wallpaper.nix` builds a Home Manager
+[specialisation](https://nix-community.github.io/home-manager/options.xhtml#opt-specialisation)
+for every file in `home-manager/wallpapers/still_wallpapers/`. A `systemd`
+user timer fires daily (and 15 s after each `home-manager switch`) to activate
+a random one, which regenerates the Stylix palette for that wallpaper.
+
+Manual commands:
+
+```bash
+random-wallpaper          # re-apply today's pick
+random-wallpaper --new    # pick a different one right now
+```
+
+Add or remove wallpaper files from `home-manager/wallpapers/still_wallpapers/`
+and re-run `nsr` to rebuild the specialisations.
 
 ---
 

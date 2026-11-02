@@ -6,8 +6,8 @@
 # unless something reads their output.
 #
 # From apt (see docs/debian-setup.md): i3-wm (GDM session entry), i3lock +
-# xss-lock (PAM), picom (GLX on Debian's NVIDIA driver), mate-polkit,
-# network-manager-gnome (nm-applet) and blueman. Everything else comes from Nix.
+# xss-lock (PAM), picom (GLX on Debian's NVIDIA driver), mate-polkit and
+# network-manager-gnome (nm-applet). Everything else comes from Nix.
 {pkgs, ...}: {
   imports = [
     ./i3.nix
@@ -28,6 +28,7 @@
     autotiling # split along the longer side
     brightnessctl # brightness keys
     xfce.mousepad # lightweight GTK3 text editor
+    bluetuith # TUI bluetooth manager
   ];
 
   # Debian's /etc/gdm3/Xsession sources this for Xorg sessions only (GNOME on
@@ -37,6 +38,9 @@
     if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
       . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
     fi
+    # Set keyboard layout early so it's correct before i3 starts.
+    # i3 startup re-runs this after apps initialise (see i3.nix).
+    setxkbmap -layout us,latam -option grp:alt_shift_toggle
   '';
 
   # 96 * 1.7, matching GNOME's text-scaling-factor on the 4K screen. Loaded

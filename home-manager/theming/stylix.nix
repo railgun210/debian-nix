@@ -1,12 +1,20 @@
 # home-manager/theming/stylix.nix
 # Wallpaper, generated base16 palette, fonts, cursor and icon theme.
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: let
+  wallpaperDir = ../wallpapers/still_wallpapers;
+  wallpaperFiles = builtins.attrNames (
+    lib.filterAttrs (_: type: type == "regular") (builtins.readDir wallpaperDir)
+  );
+  defaultWallpaper = wallpaperDir + "/${builtins.head wallpaperFiles}";
+in {
   config = {
     stylix = {
       enable = true;
 
-      # Wallpaper is declared directly here; color scheme is generated from it.
-      image = ../wallpapers/still_wallpapers/wallhaven-3qrdr6.jpg;
+      # Default wallpaper for the base generation; random-wallpaper.nix swaps in
+      # a random one daily. Picked dynamically so deleting a wallpaper won't
+      # break the build.
+      image = defaultWallpaper;
       imageScalingMode = "fit";
 
       polarity = "dark";

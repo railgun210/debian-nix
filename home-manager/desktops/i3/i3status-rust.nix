@@ -229,7 +229,7 @@ in
             json     = true;
             format   = "<span color='#${c.base02}'>$short_text</span> $text";
             interval = 5;
-            click    = [ { button = "left"; cmd = "blueman-manager"; } ];
+            click    = [ { button = "left"; cmd = "ghostty --window-decoration=none --class=bluetuith -e bluetuith"; } ];
           }
 
           # CPU temperature

@@ -130,6 +130,11 @@ in
             criteria.class = "^smile$";
             command = "floating enable, move position center";
           }
+          # bluetuith TUI: floating terminal launched from the status bar.
+          {
+            criteria.class = "^bluetuith$";
+            command = "floating enable, resize set 900 600, move position center";
+          }
         ];
       };
 
@@ -234,7 +239,6 @@ in
       # -------------------------------------------------------------------
       startup = [
         { command = "xrdb -merge ~/.Xresources";                                                         notification = false;                  }
-        { command = "setxkbmap -layout us,latam -option grp:alt_shift_toggle"; always = true;            notification = false;                  }
         { command = "picom -b";                                                                           notification = false;                  }
         { command = "nm-applet";                                                                          notification = false;                  }
         { command = polkitAgent;                                                                          notification = false;                  }
@@ -249,6 +253,11 @@ in
         # Re-run on every reload so a new stylix.image redraws the wallpaper.
         { command = "feh --no-fehbg --bg-fill ${config.stylix.image}";          always = true;           notification = false;                  }
         { command = "pkill -x autotiling; autotiling";                          always = true;           notification = false;                  }
+        # Run setxkbmap LAST so apps that D-Bus-activate GNOME input services
+        # (Thunderbird, Emacs, Maestral …) cannot override it.  The 5-second
+        # delayed pass catches anything that activates lazily after startup.
+        { command = "setxkbmap -layout us,latam -option grp:alt_shift_toggle";                                             always = true; notification = false; }
+        { command = "bash -c 'sleep 5 && setxkbmap -layout us,latam -option grp:alt_shift_toggle'";                       always = true; notification = false; }
       ];
 
       # -------------------------------------------------------------------

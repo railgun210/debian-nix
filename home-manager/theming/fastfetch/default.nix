@@ -22,7 +22,7 @@
       modules = [
         {
           type = "title";
-          format = "{#1}╭───────────── {#}{user-name-colored} ⚡Fire At Will⚡";
+          format = "{#1}╭───────────── {#}{user-name-colored} ⚡Fire At Will ⚡";
         }
         {
           type = "custom";

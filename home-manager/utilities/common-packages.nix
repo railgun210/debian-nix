@@ -13,7 +13,6 @@
     goverlay # GUI for MangoHud
     vlc # Media player
     celluloid # GTK frontend for mpv
-    strawberry # Music player
     qbittorrent # Torrent client
     font-manager # Font inspection and management
     maestral # FOSS Dropbox CLI

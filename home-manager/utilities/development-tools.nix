@@ -7,7 +7,6 @@
     cargo
     rustc
 
-    uv # Fast Python package manager
     ruff # Python linter
 
     # JavaScript/Node
