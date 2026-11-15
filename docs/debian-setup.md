@@ -239,11 +239,21 @@ git clone https://github.com/railgun210/doom-emacs ~/.config/doom
 
 ```bash
 sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-sudo flatpak install flathub it.mijorus.smile io.github.realmazharhussain.GdmSettings
+sudo flatpak install flathub it.mijorus.smile
 ```
 
 - **Smile** — emoji picker, `Super+Shift+.` in both sessions
-- **GDM Settings** — login screen wallpaper and theme (GDM isn't themed by Stylix)
+
+The GDM login screen wallpaper is set automatically by `home-manager switch` via
+`theming/stylix.nix`'s `home.activation.gdmWallpaper`. That activation writes
+`/etc/dconf/db/gdm.d/00-wallpaper` and runs `dconf update` with `sudo`. To avoid
+a password prompt during every switch, add a sudoers drop-in:
+
+```bash
+echo 'railgun ALL=(ALL) NOPASSWD: /usr/bin/tee /etc/dconf/db/gdm.d/00-wallpaper, /usr/bin/dconf update' \
+  | sudo tee /etc/sudoers.d/gdm-wallpaper
+sudo chmod 440 /etc/sudoers.d/gdm-wallpaper
+```
 
 **P3X OneNote** isn't on Flathub. Download the `x86_64.flatpak` bundle from
 [its releases](https://github.com/patrikx3/onenote/releases) and install it
@@ -299,26 +309,6 @@ force-installs four extensions on every launch:
 - **uBlock Origin** — ad-blocker
 
 No apt or Flatpak steps needed — Chrome and its policy land with `home-manager switch`.
-
-## 17. Random wallpaper
-
-`theming/random-wallpaper.nix` builds a Home Manager
-[specialisation](https://nix-community.github.io/home-manager/options.xhtml#opt-specialisation)
-for every file in `home-manager/wallpapers/still_wallpapers/`. A `systemd`
-user timer fires daily (and 15 s after each `home-manager switch`) to activate
-a random one, which regenerates the Stylix palette for that wallpaper.
-
-Manual commands:
-
-```bash
-random-wallpaper          # re-apply today's pick
-random-wallpaper --new    # pick a different one right now
-```
-
-Add or remove wallpaper files from `home-manager/wallpapers/still_wallpapers/`
-and re-run `nsr` to rebuild the specialisations.
-
----
 
 ## After the reboot
 

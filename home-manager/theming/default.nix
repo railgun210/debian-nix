@@ -4,6 +4,5 @@
     ./fastfetch
     ./font-settings.nix
     ./stylix.nix
-    ./random-wallpaper.nix
   ];
 }

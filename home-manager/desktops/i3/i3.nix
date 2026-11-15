@@ -251,7 +251,7 @@ in
         { command = "maestral start";                                                                     notification = false;                  }
         { command = "/snap/bin/todoist";                                                                   notification = false;                  }
         # Re-run on every reload so a new stylix.image redraws the wallpaper.
-        { command = "feh --no-fehbg --bg-fill ${config.stylix.image}";          always = true;           notification = false;                  }
+        { command = "feh --no-fehbg --bg-tile ${config.stylix.image}";          always = true;           notification = false;                  }
         { command = "pkill -x autotiling; autotiling";                          always = true;           notification = false;                  }
         # Run setxkbmap LAST so apps that D-Bus-activate GNOME input services
         # (Thunderbird, Emacs, Maestral …) cannot override it.  The 5-second

@@ -38,6 +38,11 @@
     if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
       . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
     fi
+    # Prevent GTK/Qt apps from activating ibus-daemon, which would take over
+    # from XKB and break setxkbmap layout switching (grp:alt_shift_toggle).
+    export GTK_IM_MODULE=xim
+    export QT_IM_MODULE=xim
+    export XMODIFIERS=""
     # Set keyboard layout early so it's correct before i3 starts.
     # i3 startup re-runs this after apps initialise (see i3.nix).
     setxkbmap -layout us,latam -option grp:alt_shift_toggle

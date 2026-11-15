@@ -10,7 +10,17 @@ in {
   # Symbols fallback for terminals and editors ("Symbols Nerd Font Mono", which
   # Doom's nerd-icons also looks for) and the proportional "Symbols Nerd Font"
   # used by the i3 weather icon.
-  home.packages = [pkgs.nerd-fonts.symbols-only pkgs.font-awesome_6];
+  home.packages = [
+    pkgs.nerd-fonts.symbols-only
+    pkgs.font-awesome_6
+    # Unicode script coverage for browsing — Noto aims for zero tofu across all
+    # scripts. noto-fonts covers Arabic, Hebrew (Yiddish), Ethiopic (Ge'ez),
+    # Devanagari, Balinese, Thai, Khmer, Armenian, Georgian, and ~40 others.
+    # CJK is a separate package due to its size.
+    pkgs.noto-fonts
+    pkgs.noto-fonts-cjk-sans
+    pkgs.noto-fonts-cjk-serif
+  ];
 
   # enabling fontconfig should regenerate cache when new font packages are added
   fonts.fontconfig = {
@@ -24,11 +34,13 @@ in {
     hinting = "slight";
     subpixelRendering = "rgb";
 
-    # for terminal and such, prefer monospace font followed by symbol font
-    defaultFonts.monospace = [
-      mono
-      "Symbols Nerd Font Mono"
-    ];
+    defaultFonts = {
+      monospace = [mono "Symbols Nerd Font Mono"];
+      # Noto CJK must be listed explicitly; fontconfig won't auto-discover them
+      # as script fallbacks for the generic sans-serif/serif families.
+      sansSerif = ["Noto Sans CJK SC" "Noto Sans CJK JP" "Noto Sans CJK KR"];
+      serif = ["Noto Serif CJK SC" "Noto Serif CJK JP" "Noto Serif CJK KR"];
+    };
 
     configFile = {
       # Home Manager has no lcdfilter option. The default filter smooths
