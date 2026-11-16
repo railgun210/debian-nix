@@ -1,6 +1,6 @@
 # home-manager/theming/stylix.nix
 # Wallpaper, generated base16 palette, fonts, cursor and icon theme.
-{ pkgs, lib, config, ... }: {
+{ pkgs, lib, ... }: {
   config = {
     stylix = {
       enable = true;
@@ -62,20 +62,6 @@
         kde.enable = false;
       };
     };
-
-    # Write a GDM dconf keyfile so the login screen shows the same wallpaper.
-    # Requires sudo without a password prompt for tee and dconf update; add to
-    # /etc/sudoers.d/ if prompted (see docs/debian-setup.md).
-    home.activation.gdmWallpaper = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      gdmdir=/etc/dconf/db/gdm.d
-      wallpaper="file://${config.stylix.image}"
-      if [[ -d "$gdmdir" ]]; then
-        printf '[org/gnome/desktop/background]\npicture-uri=%s\npicture-uri-dark=%s\npicture-options=wallpaper\n' \
-          "$wallpaper" "$wallpaper" \
-          | $SUDO tee "$gdmdir/00-wallpaper" > /dev/null
-        $SUDO dconf update
-      fi
-    '';
 
     # GTK/GNOME (Wayland) and Xwayland apps all use this cursor.
     home.pointerCursor = {

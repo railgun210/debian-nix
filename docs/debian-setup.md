@@ -239,21 +239,11 @@ git clone https://github.com/railgun210/doom-emacs ~/.config/doom
 
 ```bash
 sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-sudo flatpak install flathub it.mijorus.smile
+sudo flatpak install flathub it.mijorus.smile io.github.realmazharhussain.GdmSettings
 ```
 
 - **Smile** — emoji picker, `Super+Shift+.` in both sessions
-
-The GDM login screen wallpaper is set automatically by `home-manager switch` via
-`theming/stylix.nix`'s `home.activation.gdmWallpaper`. That activation writes
-`/etc/dconf/db/gdm.d/00-wallpaper` and runs `dconf update` with `sudo`. To avoid
-a password prompt during every switch, add a sudoers drop-in:
-
-```bash
-echo 'railgun ALL=(ALL) NOPASSWD: /usr/bin/tee /etc/dconf/db/gdm.d/00-wallpaper, /usr/bin/dconf update' \
-  | sudo tee /etc/sudoers.d/gdm-wallpaper
-sudo chmod 440 /etc/sudoers.d/gdm-wallpaper
-```
+- **GDM Settings** — set the login screen wallpaper and theme (GDM isn't themed by Stylix)
 
 **P3X OneNote** isn't on Flathub. Download the `x86_64.flatpak` bundle from
 [its releases](https://github.com/patrikx3/onenote/releases) and install it

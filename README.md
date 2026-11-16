@@ -35,7 +35,7 @@ All of these are installed by `scripts/bootstrap.sh`.
 | Category | Source |
 |----------|--------|
 | GNOME Classic, GDM, shell extensions | `apt` |
-| i3 session pieces that need root: `i3-wm`, `i3lock`, `xss-lock`, `picom`, `mate-polkit`, `blueman` | `apt` |
+| i3 session pieces that need root: `i3-wm`, `i3lock`, `xss-lock`, `picom`, `mate-polkit` | `apt` |
 | NVIDIA driver (+ 32-bit libs, DRM modesetting, suspend support) | `apt` (non-free) |
 | Firefox ESR, LibreOffice, Steam | `apt` |
 | NetworkManager, PipeWire, Bluetooth | `apt` |
@@ -215,7 +215,7 @@ for what each slot is for.
 
 | Role | Font |
 |------|------|
-| Monospace | Terminess Nerd Font Mono (rendered without antialiasing) |
+| Monospace | CozetteVector Nerd Font Mono (rendered without antialiasing) |
 | Sans-serif | Overpass Nerd Font Mono |
 | Serif | Tinos Nerd Font |
 | Emoji | Noto Color Emoji |
